@@ -1,0 +1,131 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <!-- <link rel="stylesheet" type="text/css" href="static/css/login.css"> -->
+
+    <link rel="stylesheet" href="{% static "base/css/login.css" %}"/>
+    <link rel="stylesheet" href="{% static "base/css/nav.css" %}"/>
+    <link rel="stylesheet" href="{% static "base/css/style.css" %}"/>
+
+    <!-- BOOTSTRAP -->
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+    <!-- Material Design icons web -->
+    <link rel="stylesheet" href="{% static "base/fonts/icomoon/style.css" %}"/>
+    <!-- <link rel="stylesheet" href="static/fonts/icomoon/style.css"/> -->
+
+    <!-- Chart js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>Project Manage</title>
+</head>
+<body>
+
+    <!-- NAV -->
+    <section>
+        <header class="header">
+            <nav class="navbar">
+                <a href="" class="nombre-logo">Project manages</a>
+                            
+                <!-- Icons -->
+                <!-- <span class="icon-facebook"></span> -->
+                <!-- <a href="{{ sociales.facebook }}" class="color-icon color-social" target="_blank"><span class="icon-facebook"></span></a>
+                <a href="{{ sociales.twitter }}" class="color-icon color-social" target="_blank"><span class="icon-twitter"></span></a>
+                <a href="{{ sociales.instagram }}" class="color-icon color-social" target="_blank"><span class="icon-instagram"></span></a>
+                <a href="{{ sociales.github }}" class="color-icon color-social" target="_blank"><span class="icon-github"></span></a>
+                <a href="{{ sociales.linkedin }}" class="color-icon color-social" target="_blank"><span class="icon-linkedin"></span></a>
+                <a href="{{ sociales.web }}" class="color-icon color-social" target="_blank"><span class="icon-info-circle"></span></a> -->
+        
+        
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">Proyectos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+                 <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </nav>
+        </header>  
+    </section>
+    <!-- END NAV -->
+    {% block cuerpo %}
+    <!-- resumen -->
+
+    <section>
+        <div class="container">
+            <!-- <p>El numero de proyectos es:  {{No_proyectos}}</p> -->
+            <div class="login">
+                <div class="row container-login">
+                    <div class="col-12 col-sm-12 col-md-6 resumenpart1">
+                        <div class="resumenpart1-letter">
+                            <h3>Número de proyectos: {{No_proyectos}}</h3>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-6 resumenpart2">
+                        <div class="">
+                            <canvas id="myChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% endblock %}
+
+    <!-- footer -->
+    <section>
+        <div class="footer_part1">
+            <div class="footer_part2">
+                <div class="row">
+                    <div class="col-12 col-sm-7 col-md-7">
+                        <h3 class="titulo-footer">Realizado por:</h3>
+
+                        <h4 class="titulo-footer"></h4>
+                        <!-- <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Placeat accusantium consectetur facere rem et atque quae eveniet impedit, sunt est unde dolorem fuga sequi a animi officia voluptate ratione asperiores!</p> -->
+                        <p></p>
+                    </div>
+                    <div class="col-11 col-sm-3 col-md-3">
+                        <div>
+                            <h3 class="titulo-footer">Contacto</h3>
+                        </div>
+                        <!-- <div class="grid_tool">
+                            <a href="{{ sociales.facebook }}" class="color-icon color-social" target="_blank"><span class="icon-facebook"></span></a>
+                            <a href="{{ sociales.twitter }}" class="color-icon color-social" target="_blank"><span class="icon-twitter"></span></a>
+                            <a href="{{ sociales.instagram }}" class="color-icon color-social" target="_blank"><span class="icon-instagram"></span></a>
+                            <a href="{{ sociales.github }}" class="color-icon color-social" target="_blank"><span class="icon-github"></span></a>
+                            <a href="{{ sociales.linkedin }}" class="color-icon color-social" target="_blank"><span class="icon-linkedin"></span></a>
+                            <a href="mailto:andrestrianareina@outlook.com" class="color-icon color-social"><span class="icon-mail_outline"></span></a>
+                            <a href="{{ sociales.web }}" class="color-icon color-social" target="_blank"><span class="icon-info-circle"></span></a>
+                        </div> -->
+                    </div>
+                </div>
+                <div>
+                    <p class="pDesing">Design by Andrés Triana - 2021</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--  -->
+    <script src="{% static "base/js/nav.js" %}"></script>            
+</body>
+</html>

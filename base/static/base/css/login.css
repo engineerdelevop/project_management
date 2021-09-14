@@ -1,0 +1,60 @@
+/* 5bc0eb, FDE74C, 9BC53D, C3423F, 211A1E */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.login{
+    width: 80%; 
+    height:650px;
+    align-items: center;
+    margin: 20px auto;
+    border-radius: 10px;
+    /* background-color: #1a46df; */
+}
+
+.container-login{
+    position: relative;
+    top: 25%;
+}
+
+@media only screen and (max-width: 768px) {
+    .container-login{
+        position: relative;
+        top: 0%;
+         }
+}
+
+.info-basic{
+    background-color: #211A1E;
+    color:white;
+}
+
+.login-part{
+    background-color: #C3423F;
+}
+
+.principal-name{
+    /* margin: 10px auto; */
+    text-align: center;
+    padding: 50px .5em;
+}
+
+.second-name{
+    text-align: center;
+    padding: 50px .5em;
+}
+
+
+
+.form-info{
+    text-align: left;
+    padding: 30px .5em;
+}
+
+.button-form{
+    text-align: center;
+    padding: 30px .5em;
+}
