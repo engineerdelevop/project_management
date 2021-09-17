@@ -55,7 +55,7 @@
                         <a href="" class="nav-link">Proyectos</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link">Logout</a>
+                        <a href="{% url 'base:logout' %}" class="nav-link">Logout</a>
                     </li>
                 </ul>
                  <div class="hamburger">
@@ -77,7 +77,7 @@
                 <div class="row container-login">
                     <div class="col-12 col-sm-12 col-md-6 resumenpart1">
                         <div class="resumenpart1-letter">
-                            <h3>Número de proyectos: {{No_proyectos}}</h3>
+                            <h3>Número de proyectos: </h3>
                         </div>
                     </div>
                     <div class="col-12 col-sm-12 col-md-6 resumenpart2">

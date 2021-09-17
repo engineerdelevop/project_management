@@ -46,14 +46,32 @@
                 <div class="col-12 col-sm-12 col-md-6 login-part">
                     <form method="post">
                         {% csrf_token %}
+
+                        {% if form.non_fields.errors %}
+                        <div class="alert alert-danger alert-dismisiible" role="alert">
+                            {{ form.non_fields.errors }}
+                        </div>
+                        {% endif %}
                         <div class="form-info">
+                            {% if form.username.errors %}
+                                {% for error in forms.username.errors %}
+                                <div class="alert alert-danger alert-dismisiible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <strong>Advertencia: </strong> {{ form.get_invalid_login_error }}
+                                </div>
+                                {% endfor %}
+                            {% endif %}
                             <span class="icon-user"></span>
                             <label for="fname">Usuario</label>
-                            <input type="text" class="form-control" placeholder="nombre de usuario" name="username">
+                            {{ form.username }}
+                            <!-- <input type="text" class="form-control" placeholder="nombre de usuario" name="username"> -->
                         </div>
                         <div class="form-info">
                             <label for="">Contraseña</label>
-                            <input type="password" class="form-control" placeholder="Contraseña" name="password">
+                            {{ form.password }}
+                            <!-- <input type="password" class="form-control" placeholder="Contraseña" name="password"> -->
                         </div>
                         <div class="button-form">
                             <button type="submit" class="btn btn-dark py-2 px-4 text-white">Iniciar sesion</button>
