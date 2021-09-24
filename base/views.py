@@ -18,15 +18,19 @@ from django.views.generic import ListView
 # 
 from .models import *
 
-# resumen principal
+# resumen principal, sumar, restar, contar
 
 import pandas as pd
-from django.db.models import Sum, Max, Min, Avg
+from django.db.models import Sum, Max, Min, Avg, Count
+from django.core.paginator import Paginator
+
 
 
 
 # Create your views here.
 
+#####################
+###### Login y logout
 
 # Se crea clase para el inicio de sesión
 class Login(FormView):
@@ -54,37 +58,38 @@ def logoutUsuario(request):
     return HttpResponseRedirect('/accounts/login/')
 
 
+
+
+#####################
+###### home resumen proyectos
+
 class Inicio(ListView):
 
     def index(request):
 
-        # contar No de proyectos
-        # No_proyectos = Proyecto.objects.filter().count()
+        # Cuenta el numero de proyectos
+        NoProyectos = Proyecto.objects.values('nombre').count() 
+        # Cuenta el numero de proyectos sin iniciar
+        NoSinIniciar = Proyecto.objects.filter(estado_id = 1).count()
+        # Cuenta el numero de proyectos en proceso
+        NoEnProceso = Proyecto.objects.filter(estado_id = 2).count()
+        # Cuneta e numero de proyectos finalizados
+        NoFinalizados = Proyecto.objects.filter(estado_id = 3).count()
 
-        # dataframe, don include the join tables
 
-        # df = pd.DataFrame(list(Proyecto.objects.all().values()))
-            
-        # select one part of the database
+        # muestra los proyectos
+        proyectos = Proyecto.objects.get_queryset().order_by('estado_id')
 
-        #labels = []
-        #data = []
-        #queryset5 = Proyecto.objects.values('estado__nombre').annotate(No_estado=Count('presupuesto')).order_by('-estado')
-
-        # SQL conection
+        paginator = Paginator(proyectos,2)
+        pagina = request.GET.get('page')
+        proyectos = paginator.get_page(pagina)
         
-        #SQL2 = Proyecto.objects.raw("SELECT 1 as id, base_proyecto.estado_id, base_estado.nombre, COUNT( base_estado.nombre) AS ['total'] FROM base_proyecto INNER JOIN base_estado ON base_estado.id = base_proyecto.estado_id GROUP BY base_proyecto.estado_id")
 
-        #df2 = pd.DataFrame(list(Proyecto.objects.raw("SELECT 1 as id, base_proyecto.estado_id, base_estado.nombre, COUNT( base_estado.nombre) AS ['Total'] FROM base_proyecto INNER JOIN base_estado ON base_estado.id = base_proyecto.estado_id GROUP BY base_proyecto.estado_id")))
-
-        #for i in SQL2:
-        #    labels.append(i.nombre)
-        #    print(i)
-        
         context = {
-            #'No_proyectos': No_proyectos,
-            #'Resultado':queryset5,
+            'NoProyectos':NoProyectos,
+            'NoSinIniciar':NoSinIniciar,
+            'NoEnProceso':NoEnProceso,
+            'NoFinalizados':NoFinalizados,
+            'proyectos':proyectos,
         }
-
-        # print(labels)
         return render(request,'home.html',context)

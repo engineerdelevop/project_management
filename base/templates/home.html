@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -69,26 +70,130 @@
     <!-- END NAV -->
     {% block cuerpo %}
     <!-- resumen -->
-
     <section>
         <div class="container">
             <!-- <p>El numero de proyectos es:  {{No_proyectos}}</p> -->
-            <div class="login">
-                <div class="row container-login">
+            <div class="">
+                <div class="row resumen-total">
                     <div class="col-12 col-sm-12 col-md-6 resumenpart1">
                         <div class="resumenpart1-letter">
-                            <h3>Número de proyectos: </h3>
+                            <h3><strong>Número de proyectos:</strong>  {{NoProyectos}}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-sm-12 col-md-6 resumenpart2">
-                        <div class="">
-                            <canvas id="myChart"></canvas>
+                        <div class="No_proyectos_estado">
+                            <div>
+                                <h4><strong>Proyecto sin iniciar:</strong>  {{NoSinIniciar}}</h4>
+                            </div>
+                            <div>
+                                <h4><strong>Proyecto en proceso:</strong>  {{NoEnProceso}}</h4>
+                            </div>
+                            <div>
+                                <h4><strong>Proyecto finalizado:</strong>  {{NoFinalizados}}</h4>
+                            </div>
                         </div>
+                        <!-- <div class="">
+                            <canvas id="myChart"></canvas>
+                        </div> -->
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Proyectos -->
+    <section>
+        {% for proyecto in proyectos %}
+        <div class="container Resumen-proyectos">
+            <div class="grid-proyectos">
+                <!-- Titulo proyecto -->
+                <div class="">
+                    <h4 class=""><strong>Nombre proyecto: </strong> {{proyecto.nombre}}</h4>
+                </div>
+                <!-- objetivo proyecto -->
+                <div class="">
+                    <h4 class=""><strong>Objetivo proyecto:</strong>  {{proyecto.objetivo}}</h4>
+                </div>
+                <!-- tipo de proyecto -->
+                <div class="">
+                    <h4 class=""><strong>Tipo de proyecto:</strong>  {{proyecto.tipo}}</h4>
+                </div>
+                <!-- cliente-->
+                <div class="">
+                    <h4 class=""><strong>Cliente: </strong> {{proyecto.cliente}}</h4>
+                </div>
+                <!-- Presupuesto -->
+                <div class="">
+                    <h4 class=""><strong>Presupuesto:</strong>  {{proyecto.presupuesto|intcomma}}</h4>
+                </div>
+                <!-- Presupuesto -->
+                <div class="">
+                    <h4 class=""><strong>Presupuesto ejecutado:</strong>  {{proyecto.presupuesto_ejecutado|intcomma}}</h4>
+                </div>
+                <!-- Numero de actividades -->
+                <div class="">
+                    <h4 class=""><strong>Número de actividades:</strong>  {{proyecto.numero_activdades|intcomma}}</h4>
+                </div>
+                <!-- Responsable -->
+                <div>
+                    <h4 class=""><strong>Responsable: </strong> {{proyecto.responsable}}</h4>
+                </div>
+                <!-- fecha inicial-->
+                <div class="">
+                    <h4 class=""><strong>Fecha de inicio:</strong>  {{proyecto.fecha_inicial}}</h4>
+                </div>
+                <!-- fecha final -->
+                <div>
+                    <h4 class=""><strong>Fecha de cierre:</strong>  {{proyecto.fecha_final}}</h4>
+                </div>
+            </div>
+            <div>
+                <h4><strong>Estado proyecto:</strong>  {{proyecto.estado}}</h4>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary">ir al proyecto</button>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+    <!-- Paginnator -->
+    <section>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+            {% if proyectos.has_previous %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ proyectos.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+            {% endif %}
+            {% for i in proyectos.paginator.page_range %}
+                {% if moviproyectoses.number == i %}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">
+                    {{ i }}
+                    <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if proyectos.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ proyectos.next_page_number }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </section>    
 
     {% endblock %}
 
@@ -125,7 +230,7 @@
             </div>
         </div>
     </section>
-    <!--  -->
+    <!-- javascript -->
     <script src="{% static "base/js/nav.js" %}"></script>            
 </body>
 </html>

@@ -1,15 +1,65 @@
+/*  paleta de colores #F5E8C7 , #DEBA9D , #9E7777 , #6F4C5B */
+
+.resumen-total{
+    text-align: center;
+    align-items: center;
+    margin: 20px auto;
+    border-radius: 10px;
+    /* background-color: #1a46df; */
+}
+
 .resumenpart1{
-    background-color: #FDE74C;
+    background-color: #F5E8C7;
     color:black;
     text-align: center;
 }
 
 .resumenpart1-letter{
     padding: 55px .5em;
+    text-align: center;
 }
 
 .resumenpart2{
-    background-color: #9BC53D;
+    background-color: #DEBA9D;
+    border-radius: 10px;
     color:black;
     text-align: center;
+}
+
+.No_proyectos_estado{
+    padding: 55px .5em;
+    text-align: center;
+}
+
+.Resumen-proyectos{
+    margin: 5px auto;
+    padding: 5px auto;
+    text-align: center;
+    align-items: center;
+    height: auto;
+    border-radius: 10px;
+    background-color: #cac7c7;
+}
+
+.grid-proyectos{
+    text-align: left;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 20px .5em;
+    grid-auto-rows: auto;
+    grid-gap: 5px;
+    
+}
+
+@media only screen and (max-width: 760px) {
+
+    .grid-proyectos{
+        text-align: left;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        padding: 20px .5em;
+        grid-auto-rows: auto;
+        grid-gap: 5px;
+        
+    }
 }
