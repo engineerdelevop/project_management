@@ -13,7 +13,9 @@
 
     <link rel="stylesheet" href="{% static "base/css/login.css" %}"/>
     <link rel="stylesheet" href="{% static "base/css/nav.css" %}"/>
-    <link rel="stylesheet" href="{% static "base/css/style.css" %}"/>
+    <link rel="stylesheet" href="{% static "base/css/footer.css" %}"/>
+    <link rel="stylesheet" href="{% static "base/css/home.css" %}"/>
+    <link rel="stylesheet" href="{% static "base/css/proyecto.css" %}"/>
 
     <!-- BOOTSTRAP -->
     
@@ -28,7 +30,7 @@
     <!-- Chart js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <title>Project Manage</title>
+    <title>Project Management</title>
 </head>
 <body>
 
@@ -36,7 +38,7 @@
     <section>
         <header class="header">
             <nav class="navbar">
-                <a href="" class="nombre-logo">Project manages</a>
+                <a href="{% url 'base:home' %}" class="nombre-logo">Project Management</a>
                             
                 <!-- Icons -->
                 <!-- <span class="icon-facebook"></span> -->
@@ -50,10 +52,10 @@
         
                 <ul class="nav-menu">
                     <li class="nav-item">
-                        <a href="" class="nav-link">Home</a>
+                        <a href="{% url 'base:home' %}" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link">Proyectos</a>
+                        <a href="{% url 'base:lista_proyecto' %}" class="nav-link">Proyectos</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'base:logout' %}" class="nav-link">Logout</a>
@@ -70,6 +72,13 @@
     <!-- END NAV -->
     {% block cuerpo %}
     <!-- resumen -->
+    <section>
+        <div class="container">
+            <div>
+                <h1 class="Resumen-general-proyectos">Resumen general proyectos</h1>
+            </div>
+        </div>
+    </section>
     <section>
         <div class="container">
             <!-- <p>El numero de proyectos es:  {{No_proyectos}}</p> -->
@@ -100,6 +109,106 @@
             </div>
         </div>
     </section>
+    <p></p>
+    <!-- graficas -->
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-6">
+                    <div class="">
+                        <canvas id="bar-chart" height="320"></canvas>
+                        <script>
+                            var labels = {{ labelsPresupuesto|safe }}
+                            var data1 = {{ dataPresupuestos|safe }}
+                            var data2 = {{ dataEjecutado|safe }}
+    
+                            let miCanvas1 = document.getElementById('bar-chart').getContext("2d");
+    
+                            var chart2 = new Chart(miCanvas1, {
+                                    type: "bar",
+                                    data: {
+                                    labels: labels,
+                                    datasets: [
+                                            {
+                                            data: data1,
+                                            label: 'Presupuesto',
+                                            backgroundColor:'#03a9fc',  
+                                            },
+                                            {
+                                            data: data2,
+                                            label: 'Ejecutado',
+                                            backgroundColor:'#FF5733',  
+                                            }
+                                            ]
+                                        },
+                                    options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        title: {
+                                        display: true,
+                                        text: 'Presupuesto por proyecto',
+                                        padding: {
+                                                top: 10,
+                                                bottom: 30
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                        </script>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-6">
+                    <div class="">
+                        <canvas id="pie-chart" height="320"></canvas>
+                        <script>
+                            var labels = {{ labels|safe }}
+                            var data = {{ data|safe }}
+    
+                            let miCanvas2 = document.getElementById('pie-chart').getContext("2d");
+    
+                            var chart2 = new Chart(miCanvas2, {
+                                    type: "pie",
+                                    data: {
+                                    labels: labels,
+                                    datasets: [
+                                            {
+                                            data: data,
+                                            label: 'Nombre cliente',
+                                            backgroundColor:'#03a9fc',  
+                                            },
+                                            ]
+                                        },
+                                    options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        title: {
+                                        display: true,
+                                        text: 'Número de proyectos por cliente',
+                                        padding: {
+                                                top: 10,
+                                                bottom: 30
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                        </script>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <div>
+                <h2 class="Resumen-general-proyectos">Resumen proyectos</h2>
+            </div>
+        </div>
+    </section>
 
     <!-- Proyectos -->
     <section>
@@ -120,7 +229,7 @@
                 </div>
                 <!-- cliente-->
                 <div class="">
-                    <h4 class=""><strong>Cliente: </strong> {{proyecto.cliente}}</h4>
+                    <h4 class=""><strong>Cliente: </strong> {{proyecto.cliente.nombreCliente}}</h4>
                 </div>
                 <!-- Presupuesto -->
                 <div class="">
@@ -151,7 +260,8 @@
                 <h4><strong>Estado proyecto:</strong>  {{proyecto.estado}}</h4>
             </div>
             <div>
-                <button type="button" class="btn btn-primary">ir al proyecto</button>
+                <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
+                <a href="{% url 'base:detalle_proyecto' proyecto.slug %}"><h2 class="btn btn-primary" >{{proyecto.nombre}}</h2></a>
             </div>
         </div>
         {% endfor %}
@@ -199,38 +309,29 @@
 
     <!-- footer -->
     <section>
-        <div class="footer_part1">
-            <div class="footer_part2">
-                <div class="row">
+        <div class="footer">
+            <div class="footer_sector">
+                <!-- <div class="row">
                     <div class="col-12 col-sm-7 col-md-7">
-                        <h3 class="titulo-footer">Realizado por:</h3>
+                        <h3 class="footer_title">Realizado por:</h3>
 
-                        <h4 class="titulo-footer"></h4>
-                        <!-- <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Placeat accusantium consectetur facere rem et atque quae eveniet impedit, sunt est unde dolorem fuga sequi a animi officia voluptate ratione asperiores!</p> -->
+                        <h4 class="footer_title"></h4>
+                        
                         <p></p>
                     </div>
                     <div class="col-11 col-sm-3 col-md-3">
                         <div>
-                            <h3 class="titulo-footer">Contacto</h3>
+                            <h3 class="footer_title">Contacto</h3>
                         </div>
-                        <!-- <div class="grid_tool">
-                            <a href="{{ sociales.facebook }}" class="color-icon color-social" target="_blank"><span class="icon-facebook"></span></a>
-                            <a href="{{ sociales.twitter }}" class="color-icon color-social" target="_blank"><span class="icon-twitter"></span></a>
-                            <a href="{{ sociales.instagram }}" class="color-icon color-social" target="_blank"><span class="icon-instagram"></span></a>
-                            <a href="{{ sociales.github }}" class="color-icon color-social" target="_blank"><span class="icon-github"></span></a>
-                            <a href="{{ sociales.linkedin }}" class="color-icon color-social" target="_blank"><span class="icon-linkedin"></span></a>
-                            <a href="mailto:andrestrianareina@outlook.com" class="color-icon color-social"><span class="icon-mail_outline"></span></a>
-                            <a href="{{ sociales.web }}" class="color-icon color-social" target="_blank"><span class="icon-info-circle"></span></a>
-                        </div> -->
                     </div>
-                </div>
+                </div> -->
                 <div>
-                    <p class="pDesing">Design by Andrés Triana - 2021</p>
+                    <h3 class="footer_title">Design by Andrés Triana - 2021</h3>
                 </div>
             </div>
         </div>
     </section>
     <!-- javascript -->
-    <script src="{% static "base/js/nav.js" %}"></script>            
+    <script src="{% static "base/js/nav.js" %}"></script>          
 </body>
 </html>

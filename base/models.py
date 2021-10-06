@@ -40,14 +40,14 @@ class Responsable(ModeloBase):
 
 
 class Cliente(ModeloBase):
-    nombre = models.CharField('Nombre cliente', max_length=150, unique=True)
+    nombreCliente = models.CharField('Nombre cliente', max_length=150, unique=True)
 
     class  Meta:
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
 
     def __str__(self):
-        return self.nombre
+        return self.nombreCliente
 
 
 class Estado(ModeloBase):
@@ -63,6 +63,7 @@ class Estado(ModeloBase):
 
 class Proyecto(ModeloBase):
     nombre = models.CharField('Nombre proyecto', max_length=150, unique=True)
+    slug = models.CharField('Slug', max_length=150, unique=True, null=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE)
     tipo = models.ForeignKey(TipoProyecto, on_delete=models.CASCADE)
     objetivo = models.TextField('Objetivo')
@@ -89,11 +90,12 @@ class FaseProyecto(ModeloBase):
 class Actividad(ModeloBase):
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     fase = models.ForeignKey(FaseProyecto, on_delete=models.CASCADE)
-    nombre_actividad = models.CharField('Nombre de actividad', max_length=150, unique=True)
+    nombre_actividad = models.CharField('Nombre de actividad', max_length=150)
     descripcion = models.TextField('Descripción de la actividad')
     meta = models.IntegerField('Meta')
     avance = models.IntegerField('Avance', null=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE)
+    responsable = models.ForeignKey(Responsable, on_delete=models.CASCADE, null= True)
     fecha_inicial = models.DateField('Fecha inicio')
     fecha_final = models.DateField('Fecha fin')
 

@@ -1,0 +1,123 @@
+{% extends 'home.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block cuerpo %}
+
+<!-- Creación nuevo proyecto -->
+<section>
+    <div class="container">
+        <div class="grid-proyectos">
+            <a href=""><h2 class="btn btn-primary" >Crear nuevo proyecto</h2></a>    
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="contanier">
+        <div>
+            <h1 class="titulo-pryecto-page">Lista proyectos</h1>
+        </div>
+    </div>
+</section>
+
+
+<section>
+    {% for ListarProyecto in ListarProyectos %}
+
+    <div class="container Resumen-proyectos">
+        <div class="grid-proyectos">
+            <!-- Titulo proyecto -->
+            <div class="">
+                <h4 class=""><strong>Nombre proyecto: </strong> {{ListarProyecto.nombre}}</h4>
+            </div>
+            <!-- objetivo proyecto -->
+            <div class="">
+                <h4 class=""><strong>Objetivo proyecto:</strong>  {{ListarProyecto.objetivo}}</h4>
+            </div>
+            <!-- tipo de proyecto -->
+            <div class="">
+                <h4 class=""><strong>Tipo de proyecto:</strong>  {{ListarProyecto.tipo}}</h4>
+            </div>
+            <!-- cliente-->
+            <div class="">
+                <h4 class=""><strong>Cliente: </strong> {{ListarProyecto.cliente.nombreCliente}}</h4>
+            </div>
+            <!-- Presupuesto -->
+            <div class="">
+                <h4 class=""><strong>Presupuesto:</strong>  {{ListarProyecto.presupuesto|intcomma}}</h4>
+            </div>
+            <!-- Presupuesto -->
+            <div class="">
+                <h4 class=""><strong>Presupuesto ejecutado:</strong>  {{ListarProyecto.presupuesto_ejecutado|intcomma}}</h4>
+            </div>
+            <!-- Numero de actividades -->
+            <div class="">
+                <h4 class=""><strong>Número de actividades:</strong>  {{ListarProyecto.numero_activdades|intcomma}}</h4>
+            </div>
+            <!-- Responsable -->
+            <div>
+                <h4 class=""><strong>Responsable: </strong> {{ListarProyecto.responsable}}</h4>
+            </div>
+            <!-- fecha inicial-->
+            <div class="">
+                <h4 class=""><strong>Fecha de inicio:</strong>  {{ListarProyecto.fecha_inicial}}</h4>
+            </div>
+            <!-- fecha final -->
+            <div>
+                <h4 class=""><strong>Fecha de cierre:</strong>  {{ListarProyecto.fecha_final}}</h4>
+            </div>
+        </div>
+        <div>
+            <h4><strong>Estado proyecto:</strong>  {{ListarProyecto.estado}}</h4>
+        </div>
+        <div>
+            <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
+            <a href=""><h2 class="btn btn-primary" >Actualizar proyecto</h2></a>
+        </div>
+    </div>
+
+    {% endfor %}
+</section>
+
+<!-- paginator -->
+<section>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+        {% if ListarProyectos.has_previous %}
+            <li class="page-item">
+            <a class="page-link" href="?page={{ ListarProyectos.previous_page_number }}">Previous</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+        {% endif %}
+        {% for i in ListarProyectos.paginator.page_range %}
+            {% if ListarProyectos.number == i %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">
+                {{ i }}
+                <span class="sr-only">(current)</span>
+                </span>
+            </li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if proyectos.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ ListarProyectos.next_page_number }}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</section>    
+
+
+{% endblock cuerpo %}

@@ -1,4 +1,9 @@
 /*  paleta de colores #F5E8C7 , #DEBA9D , #9E7777 , #6F4C5B */
+.Resumen-general-proyectos{
+    text-align: center;
+    align-items: center;
+    padding: 55px .5em;
+}
 
 .resumen-total{
     text-align: center;
@@ -40,6 +45,7 @@
     border-radius: 10px;
     background-color: #cac7c7;
 }
+
 
 .grid-proyectos{
     text-align: left;

@@ -1,0 +1,13 @@
+.footer{
+    background-color: rgb(229, 229, 157);
+}
+
+.footer_sector{
+    width:95%;
+    height:95%;
+    margin: 10px auto;
+}
+.footer_title{
+    text-align: center;
+    padding: 20px .5em;
+}

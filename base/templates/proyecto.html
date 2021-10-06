@@ -1,0 +1,128 @@
+{% extends 'home.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block cuerpo %}
+
+<section>
+    <div>
+        <h1 class="titulo-pryecto-page">Nombre proyecto: {{NombreProyecto.nombre}}</h1>
+    </div>
+</section>
+
+<!-- Listar información del proyecto -->
+<section>
+    <div class="container">
+        <div class="dato-proyectos-objetivo">
+            <h4 class=""><strong>Objetivo proyecto:</strong>  {{NombreProyecto.objetivo}}</h4>
+        </div>
+        <div class="grid-datos-proyectos">
+            <!-- Titulo proyecto -->
+            <!-- objetivo proyecto -->
+
+            <!-- tipo de proyecto -->
+            <div class="dato-proyectos">
+                <h4 class=""><strong>Tipo de proyecto:</strong>  {{NombreProyecto.tipo}}</h4>
+            </div>
+            <!-- cliente-->
+            <div class="dato-proyectos">
+                <h4 class=""><strong>Cliente: </strong> {{NombreProyecto.cliente.nombreCliente}}</h4>
+            </div>
+            <!-- Presupuesto -->
+            <div class="dato-proyectos">
+                <h4 class=""><strong>Presupuesto:</strong>  {{NombreProyecto.presupuesto|intcomma}}</h4>
+            </div>
+            <!-- Presupuesto -->
+            <div class="dato-proyectos">
+                <h4 class=""><strong>Presupuesto ejecutado:</strong>  {{NombreProyecto.presupuesto_ejecutado|intcomma}}</h4>
+            </div>
+            <!-- Numero de actividades -->
+            <div class="dato-proyectos">
+                <h4 class=""><strong>Número de actividades:</strong>  {{NombreProyecto.numero_activdades|intcomma}}</h4>
+            </div>
+            <!-- Responsable -->
+            <div>
+                <h4 class="dato-proyectos"><strong>Responsable: </strong> {{NombreProyecto.responsable}}</h4>
+            </div>
+            <!-- fecha inicial-->
+            <div class="dato-proyectos">
+                <h4 class=""><strong>Fecha de inicio:</strong>  {{NombreProyecto.fecha_inicial}}</h4>
+            </div>
+            <!-- fecha final -->
+            <div class="dato-proyectos">
+                <h4 class=""><strong>Fecha de cierre:</strong>  {{NombreProyecto.fecha_final}}</h4>
+            </div>
+        </div>
+
+        <!-- <div>
+            <button type="button" class="btn btn-primary">ir al proyecto</button>
+        </div> -->
+    </div>
+</section>
+
+<section>
+    <div>
+        <div class="container estado-proyecto">
+            <h3><strong>Estado proyecto:</strong>  {{NombreProyecto.estado}}</h3>
+        </div>
+        <div class="container estado-proyecto">
+            <h4><strong>Estado actividades:</strong></h4>
+        </div>
+    </div>
+</section>
+
+<!-- Listar actividades -->
+<section>
+    {% for ListarActividad in ListarActividades %}
+    <div class="container actividades">
+        <div>
+            <h4 class="actividad-individual"><strong>Nombre actividad:</strong>  {{ListarActividad.nombre_actividad}}</h4>
+        </div>
+        <div>
+            <h4 class="actividad-individual"><strong>Fase actividad:</strong>  {{ListarActividad.fase}}</h4>
+        </div>
+        <div>
+            <h4 class="actividad-individual"><strong>Descripción actividad:</strong>  {{ListarActividad.descripcion}}</h4>
+        </div>
+        <div>
+            <h4 class="actividad-individual"><strong>Meta actividad:</strong>  {{ListarActividad.meta}}</h4>
+        </div>
+        <div>
+            <h4 class="actividad-individual"><strong>Avance actividad:</strong>  {{ListarActividad.avance}}</h4>
+        </div>
+        <div>
+            <h4 class="actividad-individual"><strong>Estado:</strong>  {{ListarActividad.estado}}</h4>
+        </div>
+        <div>
+            <h4 class="actividad-individual"><strong>Responsable:</strong>  {{ListarActividad.responsable}}</h4>
+        </div>
+        <div>
+            <h4 class="actividad-individual"><strong>Fecha inicial actividad:</strong>  {{ListarActividad.fecha_inicial}}</h4>
+        </div>
+        <div>
+            <h4 class="actividad-individual"><strong>Fecha final actividad:</strong>  {{ListarActividad.fecha_final}}</h4>
+        </div>
+        <div>
+            <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
+            <a href=""><h2 class="boton-actividad btn btn-primary" >Actualizar actividad</h2></a>
+        </div>
+    </div>
+
+    {% endfor %}
+</section>
+
+<!-- Agregar actividad -->
+<section>
+    <div class="container">
+        <div>
+            <div>
+                <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
+                <a href=""><h2 class="boton-actividad btn btn-primary" >Agregar actividad</h2></a>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+{% endblock cuerpo %}

@@ -12,8 +12,8 @@ from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 from .forms import FormularioLogin
 
-# 
-from django.views.generic import ListView
+# para listar proyectos
+from django.views.generic import ListView, View, DetailView
 
 # 
 from .models import *
@@ -21,8 +21,15 @@ from .models import *
 # resumen principal, sumar, restar, contar
 
 import pandas as pd
-from django.db.models import Sum, Max, Min, Avg, Count
+from django.db.models import Sum, Max, Min, Avg, Count, OuterRef, Subquery
+
+# Paginator
 from django.core.paginator import Paginator
+
+# pivot table
+from django_pivot.pivot import pivot
+from django_pivot.histogram import histogram
+
 
 
 
@@ -57,8 +64,18 @@ def logoutUsuario(request):
     logout(request)
     return HttpResponseRedirect('/accounts/login/')
 
+#####################
+###### actualiación numero de tareas
 
-
+def ActualizarActividades(id):
+    try:
+        proyecto = Proyecto.objects.get(id = id)
+    except:
+        NombreProyecto = None
+    actividades = Actividad.objects.filter(proyecto_id = proyecto).count()
+    updateActividades = Proyecto.objects.get(id = id)
+    updateActividades.numero_activdades = actividades
+    updateActividades.save()
 
 #####################
 ###### home resumen proyectos
@@ -67,29 +84,133 @@ class Inicio(ListView):
 
     def index(request):
 
-        # Cuenta el numero de proyectos
+        ########### Cuenta el numero de proyectos
         NoProyectos = Proyecto.objects.values('nombre').count() 
-        # Cuenta el numero de proyectos sin iniciar
+        ########### Cuenta el numero de proyectos sin iniciar
         NoSinIniciar = Proyecto.objects.filter(estado_id = 1).count()
-        # Cuenta el numero de proyectos en proceso
+        ########### Cuenta el numero de proyectos en proceso
         NoEnProceso = Proyecto.objects.filter(estado_id = 2).count()
-        # Cuneta e numero de proyectos finalizados
+        ########### Cuenta e numero de proyectos finalizados
         NoFinalizados = Proyecto.objects.filter(estado_id = 3).count()
 
+        ########### Graficas pie estado proyectos
+        # primera versión
+        #queryset = Proyecto.objects.select_related('cliente').values('cliente').annotate(cliente_count=Count('cliente'))
+        #data = list(queryset.values_list('cliente_count', flat=True))
+        #labels = list(queryset.values_list('cliente', flat=True))
 
-        # muestra los proyectos
+        qs = Proyecto.objects.select_related('cliente').annotate(cliente_count=Count('cliente'))
+        lenQs = len(qs)
+        empresas = []
+        for q in qs:
+            empresas.append(q.cliente.nombreCliente)
+        
+        df_empresa = pd.DataFrame()
+        df_empresa['Empresas'] = empresas
+        df_empresa['Cantidad'] = 1
+
+        GruopyBtEmpresa = df_empresa.groupby(['Empresas']).sum().reset_index()
+        labels = GruopyBtEmpresa['Empresas'].tolist()
+        data = GruopyBtEmpresa['Cantidad'].tolist()
+
+
+        
+
+        ########### Grafica presupuestos
+        labelsPresupuesto = []
+        dataPresupuestos = []
+        dataEjecutado= []
+
+        queryset = Proyecto.objects.order_by('id')
+        for proyecto in queryset:
+            labelsPresupuesto.append(proyecto.nombre)
+            dataPresupuestos.append(proyecto.presupuesto)
+            dataEjecutado.append(proyecto.presupuesto_ejecutado)
+
+
+
+        ########### muestra los proyectos
         proyectos = Proyecto.objects.get_queryset().order_by('estado_id')
 
+        ########### Actualiza las actividades de cada proyecto de manera automatica en el inicio del home
+        obj= Proyecto.objects.values('id').values_list('id', flat=True)
+        list1=list(obj)
+        for i in list1:
+            lista_actualización = ActualizarActividades(i)
+            i
+
+        ########### paginator que muestra 2 proyectos por pagina
         paginator = Paginator(proyectos,2)
         pagina = request.GET.get('page')
         proyectos = paginator.get_page(pagina)
         
 
         context = {
+            ######## resumen proyectos
             'NoProyectos':NoProyectos,
             'NoSinIniciar':NoSinIniciar,
             'NoEnProceso':NoEnProceso,
             'NoFinalizados':NoFinalizados,
+
+            ######## proyectos para paginator
             'proyectos':proyectos,
+
+            ######## para graficas
+            #### presupuesto 
+            'labelsPresupuesto':labelsPresupuesto,
+            'dataPresupuestos':dataPresupuestos,
+            'dataEjecutado':dataEjecutado,
+            #### distribución clientes
+            'data':data,
+            'labels':labels,
+            # 
+            'lista_actualización':lista_actualización,
         }
         return render(request,'home.html',context)
+
+#####################
+###### información proyectos
+class DetalleProyecto(DetailView):
+    
+    def get(self,request,slug,*args,**kwargs):
+        
+        # Mostrar información del proyecto
+        try:
+            NombreProyecto = Proyecto.objects.get(slug = slug)
+            
+        except:
+            NombreProyecto = None
+
+        # Numerar las actividades del proyecto 
+        #actividades = Actividad.objects.filter(proyecto_id = NombreProyecto).count()
+        
+        #updateActividades = Proyecto.objects.get(slug = slug)
+        #updateActividades.numero_activdades = actividades
+        #updateActividades.save()
+
+        # listar actividades del proyecto
+        ListarActividades = Actividad.objects.filter(proyecto_id = NombreProyecto)
+        
+        contexto = {
+            'NombreProyecto':NombreProyecto,
+            'ListarActividades':ListarActividades,
+        }
+        return render(request,'proyecto.html',contexto)
+
+
+class listaProyecto(DetailView):
+
+    def get(self,request,*args,**kwargs):
+
+        # listar proyectos
+        ListarProyectos = Proyecto.objects.get_queryset().order_by('estado_id')
+
+        ########### paginator que muestra 4 proyectos por pagina
+        paginator = Paginator(ListarProyectos,4)
+        pagina = request.GET.get('page')
+        ListarProyectos = paginator.get_page(pagina)
+
+        contexto = {
+            'ListarProyectos':ListarProyectos,
+        }
+        return render(request,'listaProyectos.html',contexto)

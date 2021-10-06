@@ -1,0 +1,82 @@
+.titulo-pryecto-page{
+    text-align: center;
+    align-items: center;
+    margin: 15px auto;
+    padding: 15px auto;
+}
+
+.grid-datos-proyectos{
+    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 20px .5em;
+    grid-auto-rows: auto;
+    grid-gap: 5px;
+    
+}
+
+.dato-proyectos{
+    margin: auto;
+    padding: 15px 80px;
+    /* padding: 5px auto; */
+    text-align: center;
+    vertical-align: middle;
+    height: 150px;
+    width: 300px;
+    border-radius: 10px;
+    background-color: #cac7c7;
+}
+
+.dato-proyectos-objetivo{
+    margin: auto;
+    /* padding: 5px auto; */
+    align-items: center;
+    text-align: center;
+    vertical-align: middle;
+    height: auto;
+    width: 300px;
+    border-radius: 10px;
+    background-color: #cac7c7;
+}
+.estado-proyecto{
+    align-items: center;
+    text-align: center;
+    padding: 20px .5em;
+}
+
+.actividades{
+    /* margin: auto; */
+    margin: 5px auto;
+    padding: 5px auto;
+    /* padding: 5px auto; */
+    text-align: left;
+    vertical-align: middle;
+    border-radius: 10px;
+    background-color: #cac7c7;
+}
+
+.actividad-individual{
+    margin: 5px;
+    padding: 15px .5em;
+}
+
+.boton-actividad{
+    text-align: center;
+    align-items: center;
+    margin: 15px auto;
+    padding: 15px auto;
+}
+
+
+@media only screen and (max-width: 760px) {
+
+    .grid-datos-proyectos{
+        text-align: left;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        padding: 20px .5em;
+        grid-auto-rows: auto;
+        grid-gap: 5px;
+        
+    }
+}
