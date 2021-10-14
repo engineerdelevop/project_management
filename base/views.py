@@ -10,7 +10,8 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
-from .forms import FormularioLogin
+# importar formularios
+from .forms import FormularioLogin, FormsProyecto
 
 # para listar proyectos
 from django.views.generic import ListView, View, DetailView
@@ -21,6 +22,7 @@ from .models import *
 # resumen principal, sumar, restar, contar
 
 import pandas as pd
+from django_pandas.io import read_frame # conda install -c conda-forge django-pandas
 from django.db.models import Sum, Max, Min, Avg, Count, OuterRef, Subquery
 
 # Paginator
@@ -29,7 +31,6 @@ from django.core.paginator import Paginator
 # pivot table
 from django_pivot.pivot import pivot
 from django_pivot.histogram import histogram
-
 
 
 
@@ -71,7 +72,7 @@ def ActualizarActividades(id):
     try:
         proyecto = Proyecto.objects.get(id = id)
     except:
-        NombreProyecto = None
+        proyecto = None
     actividades = Actividad.objects.filter(proyecto_id = proyecto).count()
     updateActividades = Proyecto.objects.get(id = id)
     updateActividades.numero_activdades = actividades
@@ -94,11 +95,6 @@ class Inicio(ListView):
         NoFinalizados = Proyecto.objects.filter(estado_id = 3).count()
 
         ########### Graficas pie estado proyectos
-        # primera versión
-        #queryset = Proyecto.objects.select_related('cliente').values('cliente').annotate(cliente_count=Count('cliente'))
-        #data = list(queryset.values_list('cliente_count', flat=True))
-        #labels = list(queryset.values_list('cliente', flat=True))
-
         qs = Proyecto.objects.select_related('cliente').annotate(cliente_count=Count('cliente'))
         lenQs = len(qs)
         empresas = []
@@ -114,8 +110,6 @@ class Inicio(ListView):
         data = GruopyBtEmpresa['Cantidad'].tolist()
 
 
-        
-
         ########### Grafica presupuestos
         labelsPresupuesto = []
         dataPresupuestos = []
@@ -126,8 +120,6 @@ class Inicio(ListView):
             labelsPresupuesto.append(proyecto.nombre)
             dataPresupuestos.append(proyecto.presupuesto)
             dataEjecutado.append(proyecto.presupuesto_ejecutado)
-
-
 
         ########### muestra los proyectos
         proyectos = Proyecto.objects.get_queryset().order_by('estado_id')
@@ -189,7 +181,15 @@ class DetalleProyecto(DetailView):
         #updateActividades.save()
 
         # listar actividades del proyecto
-        ListarActividades = Actividad.objects.filter(proyecto_id = NombreProyecto)
+        ListarActividades = Actividad.objects.filter(proyecto_id = NombreProyecto).order_by('estado_id')
+        # data = []
+    
+        # for ListarActividad in ListarActividades:
+        #     data.append(ListarActividad.meta)
+
+        #pie avance actividad
+        frame = read_frame(ListarActividades)
+
         
         contexto = {
             'NombreProyecto':NombreProyecto,
@@ -214,3 +214,37 @@ class listaProyecto(DetailView):
             'ListarProyectos':ListarProyectos,
         }
         return render(request,'listaProyectos.html',contexto)
+
+#################
+## Formularios
+
+
+#####################
+###### Creación view formulario proyecto
+
+class ViewProyectosForms(HttpResponse):
+
+
+    def CreacionProyecto(request):
+
+        form = FormsProyecto()
+
+        contexto = {
+            'form':form, # forms proyecto
+        }
+        return render(request,'crearProyecto.html',contexto)
+
+    def ProcesarFormsProyecto(request):
+
+        form = FormsProyecto(request.POST)
+
+        if form.is_valid():
+            form.save()
+            form = FormsProyecto()
+
+        contexto = {
+            'form':form, # forms proyecto
+            'mensaje': 'OK'
+        }
+        return render(request,'crearProyecto.html',contexto)
+        

@@ -38,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize', #### Se icnlcuyo este dato para dar formatos a los numeros
+    'django.contrib.humanize', #### Se incluyo este dato para dar formatos a los numeros
     'base',
+    'crispy_forms', #### Se incluyo este para dar formatos a los formularios
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4' #### Se incluyo este para dar formatos a los formularios
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

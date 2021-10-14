@@ -1,0 +1,45 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+
+{% block cuerpo %}
+
+<section>
+    <div class="container">
+        <div>
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                This is a danger alert—check it out!
+            </div>
+        {% endif %}
+    
+        <div>
+            <h1 class="Resumen-general-proyectos">Registro creación proyectos</h1>
+        </div>
+        
+    
+        <form action="{% url 'base:guardar_proyecto' %}" method="post">
+    
+            {% csrf_token %}
+    
+            {% if mensaje %}
+                <div class="alert alert-success" role="alert">
+                    Proyecto creado exitosamente
+                </div>
+            {% endif %}
+    
+            {{ form|crispy }}
+    
+                <button type="submit" class="btn btn-primary">Guardar</button>
+    
+        </form>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock cuerpo %}

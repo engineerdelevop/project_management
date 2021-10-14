@@ -1,4 +1,11 @@
 from django.contrib.auth.forms import AuthenticationForm
+# importar libreria de forms
+from django import forms
+from django.forms import fields, widgets
+# importar los modelos
+from .models import *
+
+# Se debe instalar pip install django-crispy-forms
 
 
 class FormularioLogin(AuthenticationForm):
@@ -8,3 +15,11 @@ class FormularioLogin(AuthenticationForm):
         self.fields['username'].widget.attrs['placeholder'] = 'Nombre de usuario'
         self.fields['password'].widget.attrs['class'] = 'form-control'
         self.fields['password'].widget.attrs['placeholder'] = 'Contraseña'
+
+
+class FormsProyecto(forms.ModelForm):
+    class Meta:
+        model = Proyecto
+        fields = '__all__'
+        widgets = {'fecha_inicial': forms.DateInput(attrs={'type':'date'}), 'fecha_final': forms.DateInput(attrs={'type':'date'})}
+        # widgets = {'fecha_final': forms.DateInput(attrs={'type':'date'})}

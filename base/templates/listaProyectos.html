@@ -9,11 +9,12 @@
 <section>
     <div class="container">
         <div class="grid-proyectos">
-            <a href=""><h2 class="btn btn-primary" >Crear nuevo proyecto</h2></a>    
+            <a href="{% url 'base:crear_proyecto' %}"><h2 class="btn btn-primary" >Crear nuevo proyecto</h2></a>    
         </div>
     </div>
 </section>
 
+<!-- Listar proyectos -->
 <section>
     <div class="contanier">
         <div>
@@ -21,7 +22,6 @@
         </div>
     </div>
 </section>
-
 
 <section>
     {% for ListarProyecto in ListarProyectos %}

@@ -76,37 +76,101 @@
 <section>
     {% for ListarActividad in ListarActividades %}
     <div class="container actividades">
-        <div>
-            <h4 class="actividad-individual"><strong>Nombre actividad:</strong>  {{ListarActividad.nombre_actividad}}</h4>
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-6">
+                <div>
+                    <h4 class="actividad-individual"><strong>Nombre actividad:</strong>  {{ListarActividad.nombre_actividad}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Fase actividad:</strong>  {{ListarActividad.fase}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Descripción actividad:</strong>  {{ListarActividad.descripcion}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Meta actividad:</strong>  {{ListarActividad.meta}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Avance actividad:</strong>  {{ListarActividad.avance}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Estado:</strong>  {{ListarActividad.estado}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Responsable:</strong>  {{ListarActividad.responsable}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Fecha inicial actividad:</strong>  {{ListarActividad.fecha_inicial}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Fecha final actividad:</strong>  {{ListarActividad.fecha_final}}</h4>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-6">
+                <canvas id=" {{ListarActividad.id}}" height="320"></canvas>
+                <script>
+                    var labels = ["Avance", "Pendiente"]
+                    var avance = parseInt("{{ ListarActividad.avance|safe }}", 10)
+                    var pendiente = parseInt("{{ ListarActividad.meta|safe }}", 10) - avance
+                    var data = []
+                    data.push(avance)
+                    data.push(pendiente)
+                    var barColors = [
+                        "#2b5797",
+                        "#00aba9"
+                    ];
+
+
+                    // $('.chartjs-size-monitor').each(function(){
+                    // $(this).remove();
+                    // })
+
+                    // var indice = {{ListarActividad.id}};
+
+                    // this[indice+'_count'] = document.getElementById('pie-chart').getContext("2d");
+
+                    myChart = document.getElementById(' {{ListarActividad.id}}').getContext("2d");
+
+                    var chart2 = new Chart(myChart, {
+                    // var chart2 = new Chart(this[indice+'_count'], {
+                            type: "pie",
+                            data: {
+                            labels: labels,
+                            datasets: [
+                                    {
+                                    data: data,
+                                    label: 'Avance actividades',
+                                    backgroundColor: barColors,
+                                    },
+                                    ]
+                                },
+                            options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                display: true,
+                                text: 'Avance actividades',
+                                padding: {
+                                        top: 10,
+                                        bottom: 30
+                                        }
+                                    }
+                                }
+                            }
+                        })
+
+                    // this[indice+'_count'].destroy();
+                </script>
+            </div>
         </div>
         <div>
-            <h4 class="actividad-individual"><strong>Fase actividad:</strong>  {{ListarActividad.fase}}</h4>
+            <div>
+                <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
+                <a href=""><h2 class="boton-actividad btn btn-primary" >Actualizar actividad</h2></a>
+            </div>
         </div>
-        <div>
-            <h4 class="actividad-individual"><strong>Descripción actividad:</strong>  {{ListarActividad.descripcion}}</h4>
-        </div>
-        <div>
-            <h4 class="actividad-individual"><strong>Meta actividad:</strong>  {{ListarActividad.meta}}</h4>
-        </div>
-        <div>
-            <h4 class="actividad-individual"><strong>Avance actividad:</strong>  {{ListarActividad.avance}}</h4>
-        </div>
-        <div>
-            <h4 class="actividad-individual"><strong>Estado:</strong>  {{ListarActividad.estado}}</h4>
-        </div>
-        <div>
-            <h4 class="actividad-individual"><strong>Responsable:</strong>  {{ListarActividad.responsable}}</h4>
-        </div>
-        <div>
-            <h4 class="actividad-individual"><strong>Fecha inicial actividad:</strong>  {{ListarActividad.fecha_inicial}}</h4>
-        </div>
-        <div>
-            <h4 class="actividad-individual"><strong>Fecha final actividad:</strong>  {{ListarActividad.fecha_final}}</h4>
-        </div>
-        <div>
-            <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
-            <a href=""><h2 class="boton-actividad btn btn-primary" >Actualizar actividad</h2></a>
-        </div>
+
     </div>
 
     {% endfor %}
