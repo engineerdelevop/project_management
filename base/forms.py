@@ -23,3 +23,28 @@ class FormsProyecto(forms.ModelForm):
         fields = '__all__'
         widgets = {'fecha_inicial': forms.DateInput(attrs={'type':'date'}), 'fecha_final': forms.DateInput(attrs={'type':'date'})}
         # widgets = {'fecha_final': forms.DateInput(attrs={'type':'date'})}
+
+class FormsProyectoActualizar(forms.ModelForm):
+    class Meta:
+        model = Proyecto
+        fields = '__all__'
+        exclude = ['slug', ]
+        widgets = {'fecha_inicial': forms.DateInput(attrs={'type':'date'}), 'fecha_final': forms.DateInput(attrs={'type':'date'})}
+        # widgets = {'fecha_final': forms.DateInput(attrs={'type':'date'})}
+
+class FormsCrearActividades(forms.ModelForm):
+    class Meta:
+        model = Actividad
+        fields = '__all__'
+        #exclude = ['proyecto', ]
+        widgets = {'fecha_inicial': forms.DateInput(attrs={'type':'date'}), 'fecha_final': forms.DateInput(attrs={'type':'date'})}
+
+class FormsActualizarActividades(forms.ModelForm):
+    class Meta:
+        model = Actividad
+        fields = '__all__'
+        exclude = ['proyecto', ]
+        widgets = {'fecha_inicial': forms.DateInput(attrs={'type':'date'}), 'fecha_final': forms.DateInput(attrs={'type':'date'})}
+
+
+

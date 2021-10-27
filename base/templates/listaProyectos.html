@@ -8,7 +8,7 @@
 <!-- Creación nuevo proyecto -->
 <section>
     <div class="container">
-        <div class="grid-proyectos">
+        <div class="estado-proyecto">
             <a href="{% url 'base:crear_proyecto' %}"><h2 class="btn btn-primary" >Crear nuevo proyecto</h2></a>    
         </div>
     </div>
@@ -74,7 +74,7 @@
         </div>
         <div>
             <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
-            <a href=""><h2 class="btn btn-primary" >Actualizar proyecto</h2></a>
+            <a href="{% url 'base:actualizar_proyecto' ListarProyecto.slug %}"><h2 class="btn btn-primary" >Actualizar proyecto</h2></a>
         </div>
     </div>
 

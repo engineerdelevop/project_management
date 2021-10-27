@@ -62,9 +62,13 @@
 </section>
 
 <section>
-    <div>
+    <div >
         <div class="container estado-proyecto">
             <h3><strong>Estado proyecto:</strong>  {{NombreProyecto.estado}}</h3>
+        </div>
+        <div class="container estado-proyecto">
+            <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
+            <a href="{% url 'base:actualizar_proyecto' NombreProyecto.slug %}"><h2 class="btn btn-primary" >Actualizar proyecto</h2></a>
         </div>
         <div class="container estado-proyecto">
             <h4><strong>Estado actividades:</strong></h4>
@@ -165,9 +169,9 @@
             </div>
         </div>
         <div>
-            <div>
+            <div class="container estado-proyecto">
                 <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
-                <a href=""><h2 class="boton-actividad btn btn-primary" >Actualizar actividad</h2></a>
+                <a href="{% url 'base:actualizar_actividad' ListarActividad.id %}"><h2 class="boton-actividad btn btn-primary" >Actualizar actividad</h2></a>
             </div>
         </div>
 
@@ -180,9 +184,9 @@
 <section>
     <div class="container">
         <div>
-            <div>
+            <div class="container estado-proyecto">
                 <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
-                <a href=""><h2 class="boton-actividad btn btn-primary" >Agregar actividad</h2></a>
+                <a href="{% url 'base:crear_actividad' NombreProyecto.slug %}"><h2 class="boton-actividad btn btn-primary" >Agregar actividad</h2></a>
             </div>
         </div>
     </div>

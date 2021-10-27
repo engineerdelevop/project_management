@@ -1,5 +1,5 @@
 from django.db.models.aggregates import Count
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 # For login
@@ -11,7 +11,9 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 # importar formularios
-from .forms import FormularioLogin, FormsProyecto
+from .forms import FormularioLogin, FormsProyecto, FormsProyectoActualizar, FormsCrearActividades, FormsActualizarActividades
+# importar los mensajes
+from django.contrib import messages
 
 # para listar proyectos
 from django.views.generic import ListView, View, DetailView
@@ -167,11 +169,14 @@ class DetalleProyecto(DetailView):
     def get(self,request,slug,*args,**kwargs):
         
         # Mostrar información del proyecto
-        try:
-            NombreProyecto = Proyecto.objects.get(slug = slug)
+
+        NombreProyecto = Proyecto.objects.get(slug = slug)
+
+        # try:
+        #     NombreProyecto = Proyecto.objects.get(slug = slug)
             
-        except:
-            NombreProyecto = None
+        # except:
+        #     NombreProyecto = None
 
         # Numerar las actividades del proyecto 
         #actividades = Actividad.objects.filter(proyecto_id = NombreProyecto).count()
@@ -224,7 +229,6 @@ class listaProyecto(DetailView):
 
 class ViewProyectosForms(HttpResponse):
 
-
     def CreacionProyecto(request):
 
         form = FormsProyecto()
@@ -248,3 +252,119 @@ class ViewProyectosForms(HttpResponse):
         }
         return render(request,'crearProyecto.html',contexto)
         
+#####################
+###### Actualizar proyecto
+
+class actualziarProyecto(HttpResponse):
+
+    def modificarProyecto(request, slug):
+
+        NombreProyecto = Proyecto.objects.get(slug = slug)
+
+        form = FormsProyectoActualizar(instance=NombreProyecto)
+
+        contexto = {
+            'form':form,
+            'mensaje': 'OK'
+        }
+
+        if request.method == 'POST':
+            form = FormsProyectoActualizar(request.POST, instance=NombreProyecto)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Proyecto actualizado correctamente.')
+            else:
+                messages.error(request, 'Proyecto no actualizado, verifique la información.')
+                messages.error(request, form.errors)
+            contexto['form'] = form
+  
+        return render(request,'actualizarProyecto.html',contexto)
+
+#####################
+###### Crear actividad
+
+class viewCrearActividad(HttpResponse):
+
+    def crearActividad(request,slug):
+
+        NombreProyecto = Proyecto.objects.get(slug = slug)
+        
+        form = FormsCrearActividades()
+
+        contexto = {
+            'form':form, # forms actividad
+            'NombreProyecto':NombreProyecto,
+        }
+        # if request.method == 'POST':
+        #     #form = FormsCrearActividades()
+        #     if form.is_valid():
+        #         form.save()
+        #         form = FormsCrearActividades()
+        #         #NombreProyecto.proyecto = request.proyecto
+        #         messages.success(request, 'Actividad creada correctamente.')
+        #     else:
+        #         messages.error(request, 'Actividad no creada, verifique la información.')
+        #         messages.error(request, form.errors)
+
+        #     contexto['form'] = form
+        return render(request,'crearActividad.html',contexto)
+
+    def crearActividadCargue(request,slug):
+
+        NombreProyecto = Proyecto.objects.get(slug = slug)
+
+        #form = FormsCrearActividades(request.POST, instance=NombreProyecto)
+        form = FormsCrearActividades(request.POST)
+        contexto = {
+            'form':form, # forms proyecto
+            'mensaje': 'OK',
+            'NombreProyecto':NombreProyecto,
+        }
+
+        if request.method == 'POST':
+            #form = FormsCrearActividades(request.POST)
+            if form.is_valid():
+                form.save()
+                #NombreProyecto.proyecto = request.proyecto
+                form = FormsCrearActividades()
+                messages.success(request, 'Actividad creada correctamente.')
+            else:
+                messages.error(request, 'Actividad no creada, verifique la información.')
+                messages.error(request, form.errors)
+
+            contexto['form'] = form
+
+        return render(request,'crearActividad.html',contexto)
+
+#####################
+###### actualización actividades
+
+class actualizarActividad(HttpResponse):
+
+    def modificarActividad(request,id):
+
+        #NombreProyecto = Proyecto.objects.get(slug = slug)
+
+        ListarActividades = Actividad.objects.get(id = id)
+
+        form = FormsActualizarActividades(instance=ListarActividades)
+
+        contexto = {
+            'form':form,
+            'mensaje': 'OK'
+        }
+
+        if request.method == 'POST':
+            form = FormsActualizarActividades(request.POST, instance=ListarActividades)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Actividad actualizada correctamente.')
+            else:
+                messages.error(request, 'Actividad no actualizada, verifique la información.')
+                messages.error(request, form.errors)
+            contexto['form'] = form
+  
+        return render(request,'actualizarActividad.html',contexto)
+
+
+
