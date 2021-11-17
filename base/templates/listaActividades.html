@@ -1,0 +1,152 @@
+{% extends 'home.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block cuerpo %}
+
+<!-- Listar proyectos -->
+<section>
+    <div class="contanier">
+        <div>
+            <h1 class="titulo-pryecto-page">Lista actividades</h1>
+        </div>
+    </div>
+</section>
+
+<!-- Listar actividades -->
+<section>
+    {% for listarActividad in listarActividades %}
+    <div class="container actividades">
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-6">
+                <div>
+                    <h4 class="actividad-individual"><strong>Pertenece al proyecto:</strong>  {{listarActividad.proyecto.nombre}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Nombre actividad:</strong>  {{listarActividad.nombre_actividad}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Fase actividad:</strong>  {{listarActividad.fase}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Descripción actividad:</strong>  {{listarActividad.descripcion}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Meta actividad:</strong>  {{listarActividad.meta}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Avance actividad:</strong>  {{listarActividad.avance}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Estado:</strong>  {{listarActividad.estado}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Responsable:</strong>  {{listarActividad.responsable.first_name}} {{listarActividad.responsable.last_name}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Fecha inicial actividad:</strong>  {{listarActividad.fecha_inicial}}</h4>
+                </div>
+                <div>
+                    <h4 class="actividad-individual"><strong>Fecha final actividad:</strong>  {{listarActividad.fecha_final}}</h4>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-6">
+                <canvas id=" {{listarActividad.id}}" height="320"></canvas>
+                <script>
+                    var labels = ["Avance", "Pendiente"]
+                    var avance = parseInt("{{ listarActividad.avance|safe }}", 10)
+                    var pendiente = parseInt("{{ listarActividad.meta|safe }}", 10) - avance
+                    var data = []
+                    data.push(avance)
+                    data.push(pendiente)
+                    var barColors = [
+                        "#2b5797",
+                        "#00aba9"
+                    ];
+
+                    myChart = document.getElementById(' {{listarActividad.id}}').getContext("2d");
+
+                    var chart2 = new Chart(myChart, {
+                            type: "pie",
+                            data: {
+                            labels: labels,
+                            datasets: [
+                                    {
+                                    data: data,
+                                    label: 'Avance actividades',
+                                    backgroundColor: barColors,
+                                    },
+                                    ]
+                                },
+                            options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                display: true,
+                                text: 'Avance actividades',
+                                padding: {
+                                        top: 10,
+                                        bottom: 30
+                                        }
+                                    }
+                                }
+                            }
+                        })
+
+                </script>
+            </div>
+        </div>
+        <div>
+            <div class="container estado-proyecto">
+                <a href="{% url 'base:actualizar_actividad' listarActividad.id %}"><h2 class="boton-actividad btn btn-primary" >Actualizar actividad</h2></a>
+            </div>
+        </div>
+
+    </div>
+
+    {% endfor %}
+</section>
+
+
+<!-- paginator -->
+<section>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+        {% if listarActividades.has_previous %}
+            <li class="page-item">
+            <a class="page-link" href="?page={{ listarActividades.previous_page_number }}">Previous</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+        {% endif %}
+        {% for i in listarActividades.paginator.page_range %}
+            {% if listarActividades.number == i %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">
+                {{ i }}
+                <span class="sr-only">(current)</span>
+                </span>
+            </li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if proyectos.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ listarActividades.next_page_number }}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</section>    
+
+
+{% endblock cuerpo %}

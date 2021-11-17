@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -11,32 +12,41 @@ class ModeloBase(models.Model):
 
     class  Meta:
         abstract = True
-
-
+        permissions = (
+            ('create', 'Create'),
+            ('read', 'Read'),
+            ('update', 'Update'),
+            ('delete', 'Delete')
+        )
+        
+        
 class TipoProyecto(ModeloBase):
     nombre = models.CharField('Nombre tipo proyecto', max_length=100, unique=True)
 
     class Meta:
         verbose_name = 'tipo'
         verbose_name_plural = 'Tipos'
+        
 
     def __str__(self):
         return self.nombre
 
 
 class Responsable(ModeloBase):
-    nombre = models.CharField('Nombres', max_length=150)
-    apellidos = models.CharField('Apellidos', max_length=120)
-    cargo = models.CharField('Cargo', max_length=150)
-    email = models.EmailField('Correo electronico', max_length=200, unique = True) 
-    descripcion = models.TextField('Descripción')
+    #nombre = models.CharField('Nombres', max_length=150)
+    #apellidos = models.CharField('Apellidos', max_length=120)
+    #cargo = models.CharField('Cargo', max_length=150)
+    #email = models.EmailField('Correo electronico', max_length=200, unique = True) 
+    #descripcion = models.TextField('Descripción')
+
+    responsable = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     class  Meta:
         verbose_name = 'Responsable'
         verbose_name_plural = 'Responsables'
 
-    def __str__(self):
-        return '{0} {1}'.format(self.nombre,self.apellidos)
+    #def __str__(self):
+        #return '{0} {1}'.format(self.first_name,self.last_name)
 
 
 class Cliente(ModeloBase):
@@ -73,7 +83,11 @@ class Proyecto(ModeloBase):
     numero_activdades = models.IntegerField('Número de activiades', null=True)
     fecha_inicial = models.DateField('Fecha inicio')
     fecha_final = models.DateField('Fecha fin')
-    responsable = models.ForeignKey(Responsable, on_delete=models.CASCADE)
+    #responsable = models.ForeignKey(Responsable, on_delete=models.CASCADE)
+    responsable = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        default_permissions = ('change','add','delete','view')
 
 
 class FaseProyecto(ModeloBase):
@@ -95,7 +109,8 @@ class Actividad(ModeloBase):
     meta = models.IntegerField('Meta')
     avance = models.IntegerField('Avance', null=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE)
-    responsable = models.ForeignKey(Responsable, on_delete=models.CASCADE, null= True)
+    #responsable = models.ForeignKey(Responsable, on_delete=models.CASCADE, null= True)
+    responsable = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     fecha_inicial = models.DateField('Fecha inicio')
     fecha_final = models.DateField('Fecha fin')
 

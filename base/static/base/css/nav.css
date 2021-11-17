@@ -67,6 +67,15 @@ a {
     color:#ffffff;
 }
 
+.nombre-usuario1{
+    color:#ffffff;
+}
+
+.nombre-usuario2{
+    font-weight: 600;
+}
+
+
 @media only screen and (max-width: 768px) {
     .nav-menu {
         position: fixed;

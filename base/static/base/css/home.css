@@ -57,6 +57,17 @@
     
 }
 
+.no-autorizado{
+    background-color: #F5E8C7;
+    color:black;
+    text-align: center;
+}
+
+.no-autorizado-parte2{
+    padding: 20px .5em;
+    text-align: center;
+}
+
 @media only screen and (max-width: 760px) {
 
     .grid-proyectos{

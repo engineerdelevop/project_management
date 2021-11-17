@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Permission
 from django.db.models.aggregates import Count
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -10,15 +11,20 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
+
 # importar formularios
-from .forms import FormularioLogin, FormsProyecto, FormsProyectoActualizar, FormsCrearActividades, FormsActualizarActividades
+from .forms import FormularioLogin, FormsProyecto, FormsProyectoActualizar, FormsCrearActividades, FormsActualizarActividades, FormsActualizarActividadesTrabajador
+
 # importar los mensajes
 from django.contrib import messages
 
 # para listar proyectos
 from django.views.generic import ListView, View, DetailView
 
-# 
+# Para permisos
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+# modelos
 from .models import *
 
 # resumen principal, sumar, restar, contar
@@ -34,6 +40,9 @@ from django.core.paginator import Paginator
 from django_pivot.pivot import pivot
 from django_pivot.histogram import histogram
 
+# importar decorators
+
+from .decarators import allowed_users
 
 
 
@@ -67,6 +76,7 @@ def logoutUsuario(request):
     logout(request)
     return HttpResponseRedirect('/accounts/login/')
 
+
 #####################
 ###### actualiación numero de tareas
 
@@ -83,88 +93,130 @@ def ActualizarActividades(id):
 #####################
 ###### home resumen proyectos
 
-class Inicio(ListView):
+class Inicio(LoginRequiredMixin, ListView):
 
     def index(request):
 
-        ########### Cuenta el numero de proyectos
-        NoProyectos = Proyecto.objects.values('nombre').count() 
-        ########### Cuenta el numero de proyectos sin iniciar
-        NoSinIniciar = Proyecto.objects.filter(estado_id = 1).count()
-        ########### Cuenta el numero de proyectos en proceso
-        NoEnProceso = Proyecto.objects.filter(estado_id = 2).count()
-        ########### Cuenta e numero de proyectos finalizados
-        NoFinalizados = Proyecto.objects.filter(estado_id = 3).count()
+        if request.user.groups.filter(name__in=['Gerente', 'Supervisor']).exists():
 
-        ########### Graficas pie estado proyectos
-        qs = Proyecto.objects.select_related('cliente').annotate(cliente_count=Count('cliente'))
-        lenQs = len(qs)
-        empresas = []
-        for q in qs:
-            empresas.append(q.cliente.nombreCliente)
+            ########### Cuenta el numero de proyectos
+            NoProyectos = Proyecto.objects.values('nombre').count() 
+            ########### Cuenta el numero de proyectos sin iniciar
+            NoSinIniciar = Proyecto.objects.filter(estado_id = 1).count()
+            ########### Cuenta el numero de proyectos en proceso
+            NoEnProceso = Proyecto.objects.filter(estado_id = 2).count()
+            ########### Cuenta e numero de proyectos finalizados
+            NoFinalizados = Proyecto.objects.filter(estado_id = 3).count()
+
+            ########### Graficas pie estado proyectos
+            qs = Proyecto.objects.select_related('cliente').annotate(cliente_count=Count('cliente'))
+            lenQs = len(qs)
+            empresas = []
+            for q in qs:
+                empresas.append(q.cliente.nombreCliente)
+            
+            df_empresa = pd.DataFrame()
+            df_empresa['Empresas'] = empresas
+            df_empresa['Cantidad'] = 1
+
+            GruopyBtEmpresa = df_empresa.groupby(['Empresas']).sum().reset_index()
+            labels = GruopyBtEmpresa['Empresas'].tolist()
+            data = GruopyBtEmpresa['Cantidad'].tolist()
+
+
+            ########### Grafica presupuestos
+            labelsPresupuesto = []
+            dataPresupuestos = []
+            dataEjecutado= []
+
+            queryset = Proyecto.objects.order_by('id')
+            for proyecto in queryset:
+                labelsPresupuesto.append(proyecto.nombre)
+                dataPresupuestos.append(proyecto.presupuesto)
+                dataEjecutado.append(proyecto.presupuesto_ejecutado)
+
+            ########### muestra los proyectos
+            proyectos = Proyecto.objects.get_queryset().order_by('estado_id')
+
+            ########### Actualiza las actividades de cada proyecto de manera automatica en el inicio del home
+            obj= Proyecto.objects.values('id').values_list('id', flat=True)
+            list1=list(obj)
+            for i in list1:
+                lista_actualización = ActualizarActividades(i)
+                i
+
+            ########### paginator que muestra 2 proyectos por pagina
+            paginator = Paginator(proyectos,2)
+            pagina = request.GET.get('page')
+            proyectos = paginator.get_page(pagina)
+
+
+            ##########  Usuario activo
+
+            #NombreUsuario = User.objects.get(pk = 1)
         
-        df_empresa = pd.DataFrame()
-        df_empresa['Empresas'] = empresas
-        df_empresa['Cantidad'] = 1
-
-        GruopyBtEmpresa = df_empresa.groupby(['Empresas']).sum().reset_index()
-        labels = GruopyBtEmpresa['Empresas'].tolist()
-        data = GruopyBtEmpresa['Cantidad'].tolist()
-
-
-        ########### Grafica presupuestos
-        labelsPresupuesto = []
-        dataPresupuestos = []
-        dataEjecutado= []
-
-        queryset = Proyecto.objects.order_by('id')
-        for proyecto in queryset:
-            labelsPresupuesto.append(proyecto.nombre)
-            dataPresupuestos.append(proyecto.presupuesto)
-            dataEjecutado.append(proyecto.presupuesto_ejecutado)
-
-        ########### muestra los proyectos
-        proyectos = Proyecto.objects.get_queryset().order_by('estado_id')
-
-        ########### Actualiza las actividades de cada proyecto de manera automatica en el inicio del home
-        obj= Proyecto.objects.values('id').values_list('id', flat=True)
-        list1=list(obj)
-        for i in list1:
-            lista_actualización = ActualizarActividades(i)
-            i
-
-        ########### paginator que muestra 2 proyectos por pagina
-        paginator = Paginator(proyectos,2)
-        pagina = request.GET.get('page')
-        proyectos = paginator.get_page(pagina)
         
+            context = {
+                ######## resumen proyectos
+                'NoProyectos':NoProyectos,
+                'NoSinIniciar':NoSinIniciar,
+                'NoEnProceso':NoEnProceso,
+                'NoFinalizados':NoFinalizados,
 
-        context = {
-            ######## resumen proyectos
-            'NoProyectos':NoProyectos,
-            'NoSinIniciar':NoSinIniciar,
-            'NoEnProceso':NoEnProceso,
-            'NoFinalizados':NoFinalizados,
+                ######## proyectos para paginator
+                'proyectos':proyectos,
 
-            ######## proyectos para paginator
-            'proyectos':proyectos,
+                ######## para graficas
+                #### presupuesto 
+                'labelsPresupuesto':labelsPresupuesto,
+                'dataPresupuestos':dataPresupuestos,
+                'dataEjecutado':dataEjecutado,
+                #### distribución clientes
+                'data':data,
+                'labels':labels,
+                ####
+                'lista_actualización':lista_actualización,
 
-            ######## para graficas
-            #### presupuesto 
-            'labelsPresupuesto':labelsPresupuesto,
-            'dataPresupuestos':dataPresupuestos,
-            'dataEjecutado':dataEjecutado,
-            #### distribución clientes
-            'data':data,
-            'labels':labels,
-            # 
-            'lista_actualización':lista_actualización,
-        }
-        return render(request,'home.html',context)
+                #### Nombre del usuario
+                #'NombreUsuario':NombreUsuario,
+            }
+            return render(request,'home.html',context)
+        
+        else:
+
+
+            #Listar las actiidades del usuario 
+            userid = request.user.id
+            listarActividades = Actividad.objects.filter(responsable_id = userid).order_by('estado_id')
+
+            ########### Cuenta el numero de actividades 
+            NodActividades = Actividad.objects.filter(responsable_id = userid).count()
+            ########### Cuenta el numero de actividades sin proceso
+            NoSinIniciar = Actividad.objects.filter(responsable_id = userid).filter(estado_id = 1).count()
+            ########### Cuenta el numero de actividades en proceso
+            NoEnProceso = Actividad.objects.filter(responsable_id = userid).filter(estado_id = 2).count()
+            ########### Cuenta e numero de actividades finalizados
+            NoFinalizados = Actividad.objects.filter(responsable_id = userid).filter(estado_id = 3).count()
+
+            
+            ########### paginator que muestra 2 proyectos por pagina
+            paginator = Paginator(listarActividades,2)
+            pagina = request.GET.get('page')
+            listarActividades = paginator.get_page(pagina)
+            
+            contexto = {
+                'listarActividades':listarActividades,
+                'NodActividades':NodActividades,
+                'NoSinIniciar':NoSinIniciar,
+                'NoEnProceso':NoEnProceso,
+                'NoFinalizados':NoFinalizados,
+            }
+            return render(request,'listaActividadesUsuario.html',contexto)
+
 
 #####################
 ###### información proyectos
-class DetalleProyecto(DetailView):
+class DetalleProyecto(LoginRequiredMixin, DetailView):
     
     def get(self,request,slug,*args,**kwargs):
         
@@ -178,19 +230,8 @@ class DetalleProyecto(DetailView):
         # except:
         #     NombreProyecto = None
 
-        # Numerar las actividades del proyecto 
-        #actividades = Actividad.objects.filter(proyecto_id = NombreProyecto).count()
-        
-        #updateActividades = Proyecto.objects.get(slug = slug)
-        #updateActividades.numero_activdades = actividades
-        #updateActividades.save()
-
         # listar actividades del proyecto
         ListarActividades = Actividad.objects.filter(proyecto_id = NombreProyecto).order_by('estado_id')
-        # data = []
-    
-        # for ListarActividad in ListarActividades:
-        #     data.append(ListarActividad.meta)
 
         #pie avance actividad
         frame = read_frame(ListarActividades)
@@ -203,7 +244,7 @@ class DetalleProyecto(DetailView):
         return render(request,'proyecto.html',contexto)
 
 
-class listaProyecto(DetailView):
+class listaProyecto(LoginRequiredMixin, DetailView):
 
     def get(self,request,*args,**kwargs):
 
@@ -214,21 +255,46 @@ class listaProyecto(DetailView):
         paginator = Paginator(ListarProyectos,4)
         pagina = request.GET.get('page')
         ListarProyectos = paginator.get_page(pagina)
+        
+        #if request.user.groups.Gerente or request.user.groups.Supervisor:
+        if request.user.groups.filter(name__in=['Gerente', 'Supervisor']).exists():
+            contexto = {
+                'ListarProyectos':ListarProyectos,
+            }
+            return render(request,'listaProyectos.html',contexto)
+        else:
+            return render(request,'noAutorizado.html')
 
-        contexto = {
-            'ListarProyectos':ListarProyectos,
-        }
-        return render(request,'listaProyectos.html',contexto)
+
+class ListarActividad(LoginRequiredMixin, DetailView):
+
+    def get(self,request,*args,**kwargs):
+
+        listarActividades = Actividad.objects.get_queryset().order_by('estado_id')
+
+
+        ########### paginator que muestra 4 proyectos por pagina
+        paginator = Paginator(listarActividades,4)
+        pagina = request.GET.get('page')
+        listarActividades = paginator.get_page(pagina)
+        if request.user.groups.filter(name__in=['Gerente', 'Supervisor']).exists():
+            contexto = {
+                'listarActividades':listarActividades,
+            }
+            return render(request,'listaActividades.html',contexto)
+        else:
+            return render(request,'noAutorizado.html')
+
 
 #################
 ## Formularios
 
-
 #####################
 ###### Creación view formulario proyecto
 
-class ViewProyectosForms(HttpResponse):
+class ViewProyectosForms(LoginRequiredMixin, HttpResponse, ListView):
 
+    @allowed_users(allowed_roles = ['Gerente','Supervisor'])
     def CreacionProyecto(request):
 
         form = FormsProyecto()
@@ -238,6 +304,7 @@ class ViewProyectosForms(HttpResponse):
         }
         return render(request,'crearProyecto.html',contexto)
 
+    @allowed_users(allowed_roles = ['Gerente','Supervisor'])
     def ProcesarFormsProyecto(request):
 
         form = FormsProyecto(request.POST)
@@ -255,10 +322,12 @@ class ViewProyectosForms(HttpResponse):
 #####################
 ###### Actualizar proyecto
 
-class actualziarProyecto(HttpResponse):
+class actualziarProyecto(HttpResponse, ListView):
 
-    def modificarProyecto(request, slug):
+    @allowed_users(allowed_roles = ['Gerente','Supervisor'])
+    def modificarProyecto(request, slug, ):
 
+    
         NombreProyecto = Proyecto.objects.get(slug = slug)
 
         form = FormsProyectoActualizar(instance=NombreProyecto)
@@ -283,8 +352,9 @@ class actualziarProyecto(HttpResponse):
 #####################
 ###### Crear actividad
 
-class viewCrearActividad(HttpResponse):
+class viewCrearActividad(LoginRequiredMixin, HttpResponse):
 
+    @allowed_users(allowed_roles = ['Gerente','Supervisor'])
     def crearActividad(request,slug):
 
         NombreProyecto = Proyecto.objects.get(slug = slug)
@@ -295,20 +365,10 @@ class viewCrearActividad(HttpResponse):
             'form':form, # forms actividad
             'NombreProyecto':NombreProyecto,
         }
-        # if request.method == 'POST':
-        #     #form = FormsCrearActividades()
-        #     if form.is_valid():
-        #         form.save()
-        #         form = FormsCrearActividades()
-        #         #NombreProyecto.proyecto = request.proyecto
-        #         messages.success(request, 'Actividad creada correctamente.')
-        #     else:
-        #         messages.error(request, 'Actividad no creada, verifique la información.')
-        #         messages.error(request, form.errors)
 
-        #     contexto['form'] = form
         return render(request,'crearActividad.html',contexto)
 
+    @allowed_users(allowed_roles = ['Gerente','Supervisor'])
     def crearActividadCargue(request,slug):
 
         NombreProyecto = Proyecto.objects.get(slug = slug)
@@ -339,7 +399,7 @@ class viewCrearActividad(HttpResponse):
 #####################
 ###### actualización actividades
 
-class actualizarActividad(HttpResponse):
+class actualizarActividad(LoginRequiredMixin, HttpResponse):
 
     def modificarActividad(request,id):
 
@@ -367,4 +427,29 @@ class actualizarActividad(HttpResponse):
         return render(request,'actualizarActividad.html',contexto)
 
 
+class actualizarActividadTrabajador(LoginRequiredMixin, HttpResponse):
 
+    def modificarActividadtrabajador(request,id):
+
+        #NombreProyecto = Proyecto.objects.get(slug = slug)
+
+        ListarActividades = Actividad.objects.get(id = id)
+
+        form = FormsActualizarActividadesTrabajador(instance=ListarActividades)
+
+        contexto = {
+            'form':form,
+            'mensaje': 'OK'
+        }
+
+        if request.method == 'POST':
+            form = FormsActualizarActividadesTrabajador(request.POST, instance=ListarActividades)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Actividad actualizada correctamente.')
+            else:
+                messages.error(request, 'Actividad no actualizada, verifique la información.')
+                messages.error(request, form.errors)
+            contexto['form'] = form
+  
+        return render(request,'actualizarActividadTrabajador.html',contexto)

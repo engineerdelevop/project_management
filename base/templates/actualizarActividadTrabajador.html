@@ -10,16 +10,16 @@
 <section>
     <div class="container">
         <div>
-        <!-- {% if form.errors %}
+        {% if form.errors %}
             <div class="alert alert-danger" role="alert">
                 This is a danger alert—check it out!
             </div>
-        {% endif %} -->
+        {% endif %}
         <div>
-            <h1 class="Resumen-general-proyectos">Crear actividad para el proyecto - {{NombreProyecto.nombre}}</h1>
+            <h1 class="Resumen-general-proyectos">Actualizar actividad</h1>
         </div>
         {% include 'messages.html' %}
-        <form action="{% url 'base:guardar_actividad'  NombreProyecto.slug %}" method="post">
+        <form action="" method="post">
     
             {% csrf_token %}
             <!-- {% if mensaje %}
@@ -29,11 +29,9 @@
             {% endif %} -->
     
             {{ form|crispy }}
-
-            <!-- {{ form }} -->
     
                 <button type="submit" class="btn btn-primary">
-                    Crear
+                    Actualizar
                 </button>
         </form>
         </div>

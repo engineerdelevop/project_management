@@ -4,7 +4,7 @@ from django.urls import path
 from django.contrib.auth import login,logout
 from django.contrib.auth.decorators import login_required
 from base import views
-from .views import Inicio, Login, logoutUsuario, DetalleProyecto, listaProyecto, ViewProyectosForms, actualziarProyecto, viewCrearActividad, actualizarActividad
+from .views import Inicio, Login, logoutUsuario, DetalleProyecto, listaProyecto, ListarActividad, ViewProyectosForms, actualziarProyecto, viewCrearActividad, actualizarActividad, actualizarActividadTrabajador
 
 urlpatterns = [
     ### Login y logout
@@ -14,6 +14,12 @@ urlpatterns = [
 
     ### Lista de proyectos
     path('lista_proyectos/',listaProyecto.as_view(), name = 'lista_proyecto'),
+
+    ### Listar actividad
+    path('lista_actividades/',ListarActividad.as_view(), name = 'lista_actividad'),
+
+    ### Listar actividad usuario
+    path('lista_actividades_usuario/',ListarActividad.as_view(), name = 'lista_actividad_usuario'),
 
     ### Forms crear proyecto
     path('crear_Proyecto/',ViewProyectosForms.CreacionProyecto, name = 'crear_proyecto'),
@@ -32,6 +38,10 @@ urlpatterns = [
     ### actualizar actividad
     path('actualizar_actividad/<id>/',actualizarActividad.modificarActividad, name = 'actualizar_actividad'),
 
-    
+    ### actualizar actividad trabajador
+    path('actualizar_actividad_trabajador/<id>/',actualizarActividadTrabajador.modificarActividadtrabajador, name = 'actualizar_actividad_trabajador'),
+
+    ### No autorizado
+    path('no_autorizado/',Inicio.index, name = 'no_autorizado'),
     
 ]

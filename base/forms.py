@@ -46,5 +46,10 @@ class FormsActualizarActividades(forms.ModelForm):
         exclude = ['proyecto', ]
         widgets = {'fecha_inicial': forms.DateInput(attrs={'type':'date'}), 'fecha_final': forms.DateInput(attrs={'type':'date'})}
 
-
+class FormsActualizarActividadesTrabajador(forms.ModelForm):
+    class Meta:
+        model = Actividad
+        fields = '__all__'
+        exclude = ['proyecto', 'fase', 'nombre_actividad', 'descripcion', 'responsable' , 'fecha_inicial' ,'fecha_final']
+        #widgets = {'fecha_inicial': forms.DateInput(attrs={'type':'date'}), 'fecha_final': forms.DateInput(attrs={'type':'date'})}
 

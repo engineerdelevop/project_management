@@ -39,24 +39,23 @@
         <header class="header">
             <nav class="navbar">
                 <a href="{% url 'base:home' %}" class="nombre-logo">Project Management</a>
-                            
-                <!-- Icons -->
-                <!-- <span class="icon-facebook"></span> -->
-                <!-- <a href="{{ sociales.facebook }}" class="color-icon color-social" target="_blank"><span class="icon-facebook"></span></a>
-                <a href="{{ sociales.twitter }}" class="color-icon color-social" target="_blank"><span class="icon-twitter"></span></a>
-                <a href="{{ sociales.instagram }}" class="color-icon color-social" target="_blank"><span class="icon-instagram"></span></a>
-                <a href="{{ sociales.github }}" class="color-icon color-social" target="_blank"><span class="icon-github"></span></a>
-                <a href="{{ sociales.linkedin }}" class="color-icon color-social" target="_blank"><span class="icon-linkedin"></span></a>
-                <a href="{{ sociales.web }}" class="color-icon color-social" target="_blank"><span class="icon-info-circle"></span></a> -->
-        
-        
+                
+                <div>
+                    <p class="nombre-usuario1"> Bienvenido: <strong class="nombre-usuario2"></strong> {{request.user.first_name}} {{request.user.last_name}}</p>
+                </div>
+                
                 <ul class="nav-menu">
                     <li class="nav-item">
                         <a href="{% url 'base:home' %}" class="nav-link">Home</a>
                     </li>
+                    {% if request.user.is_staff %}
                     <li class="nav-item">
                         <a href="{% url 'base:lista_proyecto' %}" class="nav-link">Proyectos</a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{% url 'base:lista_actividad' %}" class="nav-link">Actividades</a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a href="{% url 'base:logout' %}" class="nav-link">Logout</a>
                     </li>
@@ -245,7 +244,7 @@
                 </div>
                 <!-- Responsable -->
                 <div>
-                    <h4 class=""><strong>Responsable: </strong> {{proyecto.responsable}}</h4>
+                    <h4 class=""><strong>Responsable: </strong> {{proyecto.responsable.first_name}} {{proyecto.responsable.last_name}}</h4>
                 </div>
                 <!-- fecha inicial-->
                 <div class="">
@@ -260,7 +259,6 @@
                 <h4><strong>Estado proyecto:</strong>  {{proyecto.estado}}</h4>
             </div>
             <div>
-                <!-- <button type="button" class="btn btn-primary">ir al proyecto </button> -->
                 <a href="{% url 'base:detalle_proyecto' proyecto.slug %}"><h2 class="btn btn-primary" >{{proyecto.nombre}}</h2></a>
             </div>
         </div>
@@ -311,20 +309,6 @@
     <section>
         <div class="footer">
             <div class="footer_sector">
-                <!-- <div class="row">
-                    <div class="col-12 col-sm-7 col-md-7">
-                        <h3 class="footer_title">Realizado por:</h3>
-
-                        <h4 class="footer_title"></h4>
-                        
-                        <p></p>
-                    </div>
-                    <div class="col-11 col-sm-3 col-md-3">
-                        <div>
-                            <h3 class="footer_title">Contacto</h3>
-                        </div>
-                    </div>
-                </div> -->
                 <div>
                     <h3 class="footer_title">Design by Andrés Triana - 2021</h3>
                 </div>
