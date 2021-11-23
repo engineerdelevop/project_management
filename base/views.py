@@ -221,14 +221,7 @@ class DetalleProyecto(LoginRequiredMixin, DetailView):
     def get(self,request,slug,*args,**kwargs):
         
         # Mostrar información del proyecto
-
         NombreProyecto = Proyecto.objects.get(slug = slug)
-
-        # try:
-        #     NombreProyecto = Proyecto.objects.get(slug = slug)
-            
-        # except:
-        #     NombreProyecto = None
 
         # listar actividades del proyecto
         ListarActividades = Actividad.objects.filter(proyecto_id = NombreProyecto).order_by('estado_id')
@@ -236,13 +229,14 @@ class DetalleProyecto(LoginRequiredMixin, DetailView):
         #pie avance actividad
         frame = read_frame(ListarActividades)
 
-        
-        contexto = {
-            'NombreProyecto':NombreProyecto,
-            'ListarActividades':ListarActividades,
-        }
-        return render(request,'proyecto.html',contexto)
-
+        if request.user.groups.filter(name__in=['Gerente', 'Supervisor']).exists():
+            contexto = {
+                'NombreProyecto':NombreProyecto,
+                'ListarActividades':ListarActividades,
+            }
+            return render(request,'proyecto.html',contexto)
+        else:
+            return render(request,'noAutorizado.html')
 
 class listaProyecto(LoginRequiredMixin, DetailView):
 
@@ -409,22 +403,25 @@ class actualizarActividad(LoginRequiredMixin, HttpResponse):
 
         form = FormsActualizarActividades(instance=ListarActividades)
 
-        contexto = {
-            'form':form,
-            'mensaje': 'OK'
-        }
+        if request.user.groups.filter(name__in=['Gerente', 'Supervisor']).exists():
+            contexto = {
+                'form':form,
+                'mensaje': 'OK'
+            }
 
-        if request.method == 'POST':
-            form = FormsActualizarActividades(request.POST, instance=ListarActividades)
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'Actividad actualizada correctamente.')
-            else:
-                messages.error(request, 'Actividad no actualizada, verifique la información.')
-                messages.error(request, form.errors)
-            contexto['form'] = form
-  
-        return render(request,'actualizarActividad.html',contexto)
+            if request.method == 'POST':
+                form = FormsActualizarActividades(request.POST, instance=ListarActividades)
+                if form.is_valid():
+                    form.save()
+                    messages.success(request, 'Actividad actualizada correctamente.')
+                else:
+                    messages.error(request, 'Actividad no actualizada, verifique la información.')
+                    messages.error(request, form.errors)
+                contexto['form'] = form
+    
+            return render(request,'actualizarActividad.html',contexto)
+        else:
+            return render(request,'noAutorizado.html')
 
 
 class actualizarActividadTrabajador(LoginRequiredMixin, HttpResponse):
