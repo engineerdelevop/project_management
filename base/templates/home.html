@@ -258,6 +258,35 @@
             <div>
                 <h4><strong>Estado proyecto:</strong>  {{proyecto.estado}}</h4>
             </div>
+            {% if proyecto.estado_id == 1 and proyecto.fecha_final <= hoy %}
+            <div>
+                <h4><strong>Alerta proyecto:</strong>Proyecto Retrasado</h4>
+            </div>
+            {% elif proyecto.estado_id == 2 and proyecto.fecha_final <= hoy %}
+            <div>
+                <h4><strong>Alerta proyecto:</strong>Proyecto Retrasado</h4>
+            </div>
+            {% elif proyecto.estado_id == 3 and proyecto.fecha_final <= hoy %}
+            <div>
+                <h4><strong>Alerta proyecto:</strong>Proyecto Finalizado</h4>
+            </div>
+            {% elif proyecto.estado_id == 1 and proyecto.fecha_inicial >= hoy %}
+            <div>
+                <h4><strong>Alerta proyecto:</strong>Proyecto Sin Iniciar</h4>
+            </div>
+            {% elif proyecto.estado_id == 1 and proyecto.fecha_final >= hoy %}
+            <div>
+                <h4><strong>Alerta proyecto:</strong>Proyecto Sin Iniciar</h4>
+            </div>
+            {% elif proyecto.estado_id == 2 and proyecto.fecha_final >= hoy %}
+            <div>
+                <h4><strong>Alerta proyecto:</strong>Proyecto Proceso</h4>
+            </div>
+            {% elif proyecto.estado_id == 3 and proyecto.fecha_final >= hoy %}
+            <div>
+                <h4><strong>Alerta proyecto:</strong>Proyecto Finalizado</h4>
+            </div>
+            {% endif %}
             <div>
                 <a href="{% url 'base:detalle_proyecto' proyecto.slug %}"><h2 class="btn btn-primary" >{{proyecto.nombre}}</h2></a>
             </div>

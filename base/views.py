@@ -36,9 +36,8 @@ from django.db.models import Sum, Max, Min, Avg, Count, OuterRef, Subquery
 # Paginator
 from django.core.paginator import Paginator
 
-# pivot table
-from django_pivot.pivot import pivot
-from django_pivot.histogram import histogram
+# date
+from datetime import date
 
 # importar decorators
 
@@ -89,6 +88,13 @@ def ActualizarActividades(id):
     updateActividades = Proyecto.objects.get(id = id)
     updateActividades.numero_activdades = actividades
     updateActividades.save()
+
+#####################
+###### calcular hoy
+
+def hoy():
+    return date.today()
+
 
 #####################
 ###### home resumen proyectos
@@ -171,15 +177,18 @@ class Inicio(LoginRequiredMixin, ListView):
                 'labelsPresupuesto':labelsPresupuesto,
                 'dataPresupuestos':dataPresupuestos,
                 'dataEjecutado':dataEjecutado,
+
                 #### distribución clientes
                 'data':data,
                 'labels':labels,
+                
                 ####
                 'lista_actualización':lista_actualización,
 
-                #### Nombre del usuario
-                #'NombreUsuario':NombreUsuario,
+                #### hoy
+                'hoy':hoy()
             }
+            
             return render(request,'home.html',context)
         
         else:
@@ -226,6 +235,25 @@ class DetalleProyecto(LoginRequiredMixin, DetailView):
         # listar actividades del proyecto
         ListarActividades = Actividad.objects.filter(proyecto_id = NombreProyecto).order_by('estado_id')
 
+        # alerta actividad
+        def alerta_proyecto():
+            if NombreProyecto.estado_id == 1 and NombreProyecto.fecha_final <= hoy():
+                return 'Proyecto retrasado'
+            elif NombreProyecto.estado_id == 2 and NombreProyecto.fecha_final <= hoy():
+                return 'Proyecto retrasado'
+            elif NombreProyecto.estado_id == 3 and NombreProyecto.fecha_final <= hoy():
+                return 'Proyecto finalizado'
+            elif NombreProyecto.estado_id == 1 and NombreProyecto.fecha_inicial >= hoy():
+                return 'Proyecto sin iniciar'
+            elif NombreProyecto.estado_id == 1 and NombreProyecto.fecha_final >= hoy():
+                return 'Proyecto sin iniciar'
+            elif NombreProyecto.estado_id == 2 and NombreProyecto.fecha_final >= hoy():
+                return 'Proyecto en proceso'
+            elif NombreProyecto.estado_id == 2 and NombreProyecto.fecha_final >= hoy():
+                return 'Proyecto finalizado'
+            else:
+                return 'Sin iniciar'
+
         #pie avance actividad
         frame = read_frame(ListarActividades)
 
@@ -233,7 +261,9 @@ class DetalleProyecto(LoginRequiredMixin, DetailView):
             contexto = {
                 'NombreProyecto':NombreProyecto,
                 'ListarActividades':ListarActividades,
+                'alerta_proyecto':alerta_proyecto()
             }
+            print(alerta_proyecto())
             return render(request,'proyecto.html',contexto)
         else:
             return render(request,'noAutorizado.html')

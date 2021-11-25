@@ -45,10 +45,6 @@ class Responsable(ModeloBase):
         verbose_name = 'Responsable'
         verbose_name_plural = 'Responsables'
 
-    #def __str__(self):
-        #return '{0} {1}'.format(self.first_name,self.last_name)
-
-
 class Cliente(ModeloBase):
     nombreCliente = models.CharField('Nombre cliente', max_length=150, unique=True)
 
@@ -85,9 +81,6 @@ class Proyecto(ModeloBase):
     fecha_final = models.DateField('Fecha fin')
     #responsable = models.ForeignKey(Responsable, on_delete=models.CASCADE)
     responsable = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-
-    class Meta:
-        default_permissions = ('change','add','delete','view')
 
 
 class FaseProyecto(ModeloBase):
